@@ -5,4 +5,6 @@ Rails.application.routes.draw do
   post "/generate_otp" => "accounts#generate_otp", as: "generate"
   get '/user_otp' => "accounts#user_otp"
   post "/authenticate" => "accounts#authenticate"
+  get '/userdetails' => "accounts#userdetails"
+
 end

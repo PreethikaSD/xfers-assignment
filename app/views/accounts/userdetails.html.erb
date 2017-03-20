@@ -1,0 +1,13 @@
+<h1 style="text-align: center">Welcome!</h1>
+<h3 style="text-align: right">Balance: <%=@available_bal%></h3>
+<br>
+<br>
+<p style="text-align: center">You have successfully created your wallet.</p>
+<br>
+
+<p style="text-align: center">You can top up your wallet by transferring to the following bank:</p>
+<h3 style="text-align: center"> Bank Name: <%=@bank_name%></h3>
+<h3 style="text-align: center"> Account Number: <%=@account_no%></h3>
+<h3 style="text-align: center"> Unique ID: <%=@unique_id%></h3>
+
+<%= link_to "Buy Products", '/products' %>

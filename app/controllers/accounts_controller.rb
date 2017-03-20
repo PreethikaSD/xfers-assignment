@@ -36,8 +36,9 @@ class AccountsController < ApplicationController
 
 
 	def authenticate
+		details = []
 		otp = params[:otp]
-		@account = Account.last
+		get_account
 		Xfers.set_sg_sandbox
 		begin
 		  puts 'Getting connect token...'
@@ -45,10 +46,10 @@ class AccountsController < ApplicationController
 		      'otp'=> otp,
 		      'phone_no'=> @account.phone_no,
 		      'signature'=> get_signature_authenticate(@account.phone_no, otp),
-		      'return_url'=> 'https://mywebsite.com/api/v3/account_registration/completed'
+		      'return_url'=> 'http://localhost:3000/userdetails'
 		  }
-		  resp = Xfers::Connect.get_token params, XFERS_APP_API_KEY
-		  user_api_token =  resp[:user_api_token]
+		  @resp = Xfers::Connect.get_token params, XFERS_APP_API_KEY
+		  user_api_token =  @resp[:user_api_token]
 		  @account.user_api_token = user_api_token
 		  @account.save
 
@@ -57,26 +58,36 @@ class AccountsController < ApplicationController
 
 		  Xfers.set_api_key user_api_token
 
-		  connect_user = Xfers::User.retrieve
-		  puts connect_user[:first_name]
-		  puts connect_user[:last_name]
-		  puts connect_user[:available_balance]
-		  puts connect_user
-
+		  @connect_user = Xfers::User.retrieve
+		  redirect_to userdetails_path
 		rescue Xfers::XfersError => e
 		  puts e.to_s
 		end
 	end
 
 
-	private
+	def userdetails
+		get_account
+		Xfers.set_sg_sandbox
 
-	def listing_params
-        params.require(:listing).permit(:title, :address, :price, :country_code, :remove_avatars, tag_ids: [], avatars: [])
-    end
+		Xfers.set_api_key get_account.user_api_token
+		@connect_user = Xfers::User.retrieve
+		@available_bal = @connect_user[:available_balance]
+		@resp = Xfers::User.transfer_info
+		@bank_name = @resp[:bank_name_full]
+		@account_no = @resp[:bank_account_no]
+		@unique_id = @resp[:unique_id]
+
+	end
+
+	private
 
     def get_signature_authenticate(phone_no,otp)
 		get_signature = Digest::SHA1.hexdigest(phone_no+otp+APP_SECRET_KEY)
 	end    	
+
+	def get_account
+		@account = Account.last 
+	end	
 
 end
