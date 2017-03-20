@@ -1,0 +1,9 @@
+<h1 style="text-align:center">Account Registration</h1>
+<h3 style="text-align:center">A one-time OTP has been sent to your mobile number: <%=@account.phone_no%></h3>
+<div style="text-align: center">
+<%= form_tag "/authenticate" do %>
+  <%= text_field_tag "otp"  %>
+  <%= submit_tag "Next" %>
+<% end %>
+</div>
+

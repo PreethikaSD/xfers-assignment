@@ -1,0 +1,7 @@
+<h1> Account Registration</h1>
+<h2>Please input your phone number below and we will send you an OTP</h2>
+
+<%= form_tag "/generate_otp" do %>
+  <%= text_field_tag "phone_no" %>
+  <%= submit_tag "Next" %>
+<% end %>
